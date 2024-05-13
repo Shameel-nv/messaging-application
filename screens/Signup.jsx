@@ -11,10 +11,33 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
 
 
 export default function Signup() {
+  const [email,setEmail]=useState('')
+  const[password,setpassword]=useState('')
     const navigator = useNavigation()
+    function handleSubmit(){
+    
+      const auth = getAuth();
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed up 
+
+    const user = userCredential.user;
+    console.log("Created Account")
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message; 
+    console.log("Account not created",errorMessage)
+    
+  });
+
+    }
     return(
         <SafeAreaView style={styles.container}>
               <StatusBar style="auto" />
@@ -28,18 +51,18 @@ export default function Signup() {
            <TextInput
         style={styles.t2}
     
-        placeholder="Email"
+        placeholder="Email" onChangeText={value=>setEmail(value)}
       />
           <TextInput
         style={styles.t2}
     
-        placeholder="Password"
+        placeholder="Password" onChangeText={value=>setpassword(value)}
         
         
       />
            
            
-           <TouchableOpacity style={styles.button}><Text>Signup</Text></TouchableOpacity>
+           <TouchableOpacity onPress={handleSubmit} style={styles.button}><Text>Signup</Text></TouchableOpacity>
            
             
           </View>

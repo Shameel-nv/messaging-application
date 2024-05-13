@@ -7,14 +7,40 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+
 
 export default function Login() {
+  
   const navigator = useNavigation()
-  const [username,setuserName]=useState('')
+  const [email,setEmail]=useState('')
   const[password,setpassword]=useState('')
+
+  function handleSubmit(){
+  
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log("userSignedin")
+         navigator.navigate("Chatroom")
+         
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("Failed to Signin,",errorMessage)
+        Alert.alert("Check your username and password!",errorMessage)
+
+      });
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.sum}>
@@ -30,18 +56,18 @@ export default function Login() {
         <View style={styles.blue}>
           <View style={styles.boxes}>
             <TextInput
-              onChangeText={(value) => console.log(value)}
+              onChangeText={(value) => setEmail(value)}
               style={styles.input1}
               placeholder="enter username"
             ></TextInput>
             <TextInput
-              onChangeText={(value) => console.log(value)}
+              onChangeText={(value) => setpassword(value)}
               style={styles.input2}
               placeholder="enter password"
             ></TextInput>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigator.navigate("Chatroom")}
+              onPress={handleSubmit}
             >
               <Text style={styles.bt}>login</Text>
             </TouchableOpacity>
@@ -62,11 +88,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   adacode: {
-    width: 200,
-    height: 200,
+    width: 180,
+    height: 180,
     margin: 15,
     margin: 30,
     right: 7,
+    borderRadius:30,
   },
   Text: {
     fontSize: 30,
@@ -74,6 +101,10 @@ const styles = StyleSheet.create({
     padding: 0,
     fontWeight:'bold',
     right:46,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
+
   },
   blue: {
     fex: 1,
@@ -130,11 +161,14 @@ const styles = StyleSheet.create({
     margin:26,
   },
   Text7:{
-    color:'limegreen',
+    color:'green',
     fontSize: 30,
     margin: -24,
     padding: 0,
     fontWeight:'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
 
   }
 });
